@@ -1,11 +1,15 @@
-import pygame
-import sys
+import pygame, sys, os
 from constants import *
 from player import *
 from circleshape import *
 from asteroid import *
 from asteroidfield import *
 from shot import *
+
+def play_shoot_sound():
+    shoot_sound_path = os.path.join('audio', 'shoot.mp3')
+    shoot_sound = pygame.mixer.Sound(shoot_sound_path)
+    shoot_sound.play()
 
 def main():
     pygame.init()
@@ -21,6 +25,7 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    
     Player.containers = (updatable, drawable)
     Asteroid.containers = (updatable, drawable, asteroids)
     AsteroidField.containers = (updatable)
@@ -29,6 +34,8 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT /2)
     asteroid_field = AsteroidField()
+    
+    font = pygame.font.SysFont("publicpixel", 30)
 
     while True:
         for event in pygame.event.get():
@@ -38,7 +45,7 @@ def main():
         updatable.update(dt)
         for a in asteroids:
             if a.collision_check(player) == True:
-                print("Game over!")
+                print(f"Game over! Your score was: {player.score}!")
                 sys.exit()
                 
         for a in asteroids:
@@ -46,10 +53,16 @@ def main():
                 if a.collision_check(s) == True:
                     a.split()
                     s.kill()
+                    player.add_score(a)
         
         pygame.Surface.fill(screen, "black")
+        
         for d in drawable:
             d.draw(screen)
+            
+        score_surface = font.render(f"Score: {player.score}", True, "white")
+        screen.blit(score_surface, (20,20))
+        
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 
