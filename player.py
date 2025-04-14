@@ -1,12 +1,14 @@
 from constants import *
 from circleshape import *
 from shot import *
+from main import play_shoot_sound
 
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.timer = 0
+        self.score = 0
         
     # in the player class
     def triangle(self):
@@ -18,7 +20,7 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen):
-        pygame.draw.polygon(screen, "white", self.triangle(), 2)
+        pygame.draw.polygon(screen, "dodgerblue2", self.triangle(), 0)
         
     def rotate(self, dt):
         self.rotation += (PLAYER_TURN_SPEED * dt)
@@ -49,6 +51,10 @@ class Player(CircleShape):
     
     def shoot(self):
         if self.timer <= 0:
+            play_shoot_sound()
             shot = Shot(self.position.x, self.position.y)
             shot.velocity = (pygame.Vector2(0,1).rotate(self.rotation)) * PLAYER_SHOOT_SPEED
             self.timer = PLAYER_SHOOT_COOLDOWN
+    
+    def add_score(self, CircleShape):
+        self.score += (100 -CircleShape.radius)
