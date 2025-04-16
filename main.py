@@ -1,39 +1,12 @@
-import pygame, sys, os, time
+import pygame, sys, os
 from constants import *
 from player import *
 from circleshape import *
 from asteroid import *
 from asteroidfield import *
-from shot import *
-
-def countdown_sequence(screen):
-    countdown = 3
-    
-    countdown_sound_path = os.path.join('audio', 'countdown.mp3')
-    countdown_sound = pygame.mixer.Sound(countdown_sound_path)
-    countdown_sound.play()    
-    
-    while countdown > -1:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return
-        
-        if countdown == 0:
-            pygame.Surface.fill(screen, "black")
-            font = pygame.font.SysFont("publicpixel", 70)
-            countdown_surface = font.render(f"Go!", True, "white")
-            screen.blit(countdown_surface, (550,335))
-            countdown -= 1
-            pygame.display.flip()
-            time.sleep(1)
-        else:
-            pygame.Surface.fill(screen, "black")
-            font = pygame.font.SysFont("publicpixel", 70)
-            countdown_surface = font.render(f"{countdown}", True, "white")
-            screen.blit(countdown_surface, (605,335))
-            pygame.display.flip()
-            countdown -= 1
-            time.sleep(1)
+from shot import Shot
+from countdown import countdown_sequence
+from gameover import game_over
 
 def play_shoot_sound():
     shoot_sound_path = os.path.join('audio', 'shoot.mp3')
@@ -75,7 +48,7 @@ def main():
         updatable.update(dt)
         for a in asteroids:
             if a.collision_check(player) == True:
-                print(f"Game over! Your score was: {player.score}!")
+                game_over(screen, score_surface)
                 sys.exit()
                 
         for a in asteroids:
