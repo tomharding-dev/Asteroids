@@ -19,9 +19,13 @@ def game_over(screen, score_surface):
         pygame.Surface.fill(screen, "black")
         font = pygame.font.SysFont("publicpixel", 50)
         gameover_surface = font.render(f"Game over!", True, "red")
-        screen.blit(gameover_surface, (640 - gameover_surface.get_width() // 2, 200))
+        screen.blit(gameover_surface,
+            (SCREEN_WIDTH // 2 - gameover_surface.get_width() // 2, SCREEN_HEIGHT // 3 - gameover_surface.get_height() // 2)
+                    )
         if timer % 0.5 != 0:   
-            screen.blit(score_surface, (640 - score_surface.get_width() // 2, 450))
+            screen.blit(score_surface,
+                (SCREEN_WIDTH // 2 - score_surface.get_width() // 2, (2 * SCREEN_HEIGHT // 3) - score_surface.get_height() // 2)
+                        )
         timer += 0.25
         pygame.display.flip()
         time.sleep(0.25)

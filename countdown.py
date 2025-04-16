@@ -1,4 +1,5 @@
 import pygame, time, os
+from constants import *
 
 def countdown_sequence(screen):
     countdown = 3
@@ -12,19 +13,15 @@ def countdown_sequence(screen):
             if event.type == pygame.QUIT:
                 return
         
+        pygame.Surface.fill(screen, "black")
+        font = pygame.font.SysFont("publicpixel", 70)
         if countdown == 0:
-            pygame.Surface.fill(screen, "black")
-            font = pygame.font.SysFont("publicpixel", 70)
             countdown_surface = font.render(f"Go!", True, "white")
-            screen.blit(countdown_surface, (550,335))
-            countdown -= 1
-            pygame.display.flip()
-            time.sleep(1)
         else:
-            pygame.Surface.fill(screen, "black")
-            font = pygame.font.SysFont("publicpixel", 70)
             countdown_surface = font.render(f"{countdown}", True, "white")
-            screen.blit(countdown_surface, (605,335))
-            pygame.display.flip()
-            countdown -= 1
-            time.sleep(1)
+        screen.blit(countdown_surface, 
+                    (SCREEN_WIDTH // 2 - countdown_surface.get_width() // 2, SCREEN_HEIGHT // 2 - countdown_surface.get_height() // 2)
+                    )
+        countdown -= 1
+        pygame.display.flip()
+        time.sleep(1)
