@@ -6,7 +6,7 @@ from asteroid import *
 from asteroidfield import *
 from shot import Shot
 from countdown import countdown_sequence
-from gameover import game_over
+from get_hit import game_over, lose_life
 
 def play_shoot_sound():
     shoot_sound_path = os.path.join('audio', 'shoot.mp3')
@@ -34,21 +34,32 @@ def main():
     Shot.containers = (updatable, drawable, shots)
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT /2)
+    pygame.display.set_caption("Asteroids")
+    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     asteroid_field = AsteroidField()
 
     countdown_sequence(screen)
 
+# ----------Main Game Loop----------
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                sys.exit()
 
         updatable.update(dt)
+        
         for a in asteroids:
             if a.collision_check(player) == True:
-                game_over(screen, score_surface)
-                sys.exit()
+                if player.lives <= 1:
+                    game_over(player, screen)
+                    sys.exit()
+                else:
+                    lose_life(player, screen)
+                    lives_surface = font.render(f"Lives: {player.lives}", True, "white") #not ideal
+                    for a in asteroids:
+                        a.kill()
+                    countdown_sequence(screen, score_surface, lives_surface)
                 
         for a in asteroids:
             for s in shots:
@@ -56,15 +67,17 @@ def main():
                     a.split()
                     s.kill()
                     player.add_score(a)
-        
+                    
         pygame.Surface.fill(screen, "black")
-        
+              
         for d in drawable:
             d.draw(screen)
-            
+        
         font = pygame.font.SysFont("publicpixel", 30)
         score_surface = font.render(f"Score: {player.score}", True, "white")
-        screen.blit(score_surface, (20,20))
+        lives_surface = font.render(f"Lives: {player.lives}", True, "white")
+        screen.blit(score_surface, (20, 20))
+        screen.blit(lives_surface, (20, 65))
         
         pygame.display.flip()
         dt = clock.tick(60) / 1000
